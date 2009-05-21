@@ -20,7 +20,7 @@
     </path>
 
 
-    <target name="all" depends="compile"/>
+    <target name="all" depends="clean, runtest, fail"/>
 
     <target name="init">
         <mkdir dir="${classes}"/>
@@ -62,5 +62,10 @@
             </batchtest>
         </junit>
     </target>
+
+    <target name="fail" if="${test.failed}" unless="nofail">
+        <fail message="JUnit tests failed!" />
+    </target>
+
 
 </project>
