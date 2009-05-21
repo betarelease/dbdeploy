@@ -2,13 +2,15 @@
     <property name="core" value="dbdeploy-core"/>
     <property name="commandline" value="dbdeploy-cli"/>
     <property name="ant-target" value="dbdeploy-ant"/>
+    <property name="junit.report.dir" value="classes/junit-logs"/>
+    <property name="test.failed" value="false"/>
 
     <property name="integration" value="dbdeploy-ant-integration-test"/>
 
     <property name="classes" value="classes"/>
     <property name="test-classes" value="test-classes"/>
 
-    <property name="lib" value="lib" />
+    <property name="lib" value="lib"/>
 
     <path id="classpath">
         <pathelement location="${classes}"/>
@@ -22,6 +24,7 @@
 
     <target name="init">
         <mkdir dir="${classes}"/>
+        <mkdir dir="${classes}/junit-logs"/>
         <mkdir dir="${test-classes}"/>
     </target>
 
@@ -39,6 +42,25 @@
     <target name="compile-test" depends="compile">
         <javac srcdir="${integration}/test" destdir="${test-classes}" classpathref="classpath"/>
         <javac srcdir="${core}/test" destdir="${test-classes}" classpathref="classpath"/>
+    </target>
+
+    <path id="test.classpath">
+        <pathelement location="${test-classes}"/>
+        <path refid="classpath"/>
+    </path>
+
+    <target name="runtest" depends="compile-test">
+        <junit fork="yes" forkmode="once" printsummary="yes" showoutput="off" failureProperty="${test.failed}">
+            <classpath location="${classes}"/>
+            <classpath>
+                <path refid="test.classpath"/>
+            </classpath>
+            <formatter type="xml" usefile="true"/>
+            <formatter type="plain" usefile="true"/>
+            <batchtest filtertrace="on" fork="yes" todir="${junit.report.dir}">
+                <fileset dir="${basedir}/${test-classes}" includes="**/*Test.java"/>
+            </batchtest>
+        </junit>
     </target>
 
 </project>
