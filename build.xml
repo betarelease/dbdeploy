@@ -1,0 +1,44 @@
+<project name="dbdeploy" default="all" basedir=".">
+    <property name="core" value="dbdeploy-core"/>
+    <property name="commandline" value="dbdeploy-cli"/>
+    <property name="ant-target" value="dbdeploy-ant"/>
+
+    <property name="integration" value="dbdeploy-ant-integration-test"/>
+
+    <property name="classes" value="classes"/>
+    <property name="test-classes" value="test-classes"/>
+
+    <property name="lib" value="lib" />
+
+    <path id="classpath">
+        <pathelement location="${classes}"/>
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+
+    <target name="all" depends="compile"/>
+
+    <target name="init">
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${test-classes}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${classes}"/>
+        <delete dir="${test-classes}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${core}/src" destdir="${classes}" classpathref="classpath"/>
+        <javac srcdir="${commandline}/src" destdir="${classes}" classpathref="classpath"/>
+        <javac srcdir="${ant-target}/src" destdir="${classes}" classpathref="classpath"/>
+    </target>
+
+    <target name="compile-test" depends="compile">
+        <javac srcdir="${integration}/test" destdir="${test-classes}" classpathref="classpath"/>
+        <javac srcdir="${core}/test" destdir="${test-classes}" classpathref="classpath"/>
+    </target>
+
+</project>
