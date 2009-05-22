@@ -4,51 +4,51 @@
     <property name="ant-target" value="dbdeploy-ant"/>
     <property name="junit.report.dir" value="classes/junit-logs"/>
     <property name="test.failed" value="false"/>
-
+		<property name="jarfile" value="${basedir}/dbdeploy.jar" />
+    
     <property name="integration" value="dbdeploy-ant-integration-test"/>
-
+    
     <property name="classes" value="classes"/>
     <property name="test-classes" value="test-classes"/>
-
+    
     <property name="lib" value="lib"/>
-
+    
     <path id="classpath">
         <pathelement location="${classes}"/>
         <fileset dir="${lib}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
-
-
+    
     <target name="all" depends="clean, runtest, fail"/>
-
+    
     <target name="init">
         <mkdir dir="${classes}"/>
         <mkdir dir="${classes}/junit-logs"/>
         <mkdir dir="${test-classes}"/>
     </target>
-
+    
     <target name="clean">
         <delete dir="${classes}"/>
         <delete dir="${test-classes}"/>
     </target>
-
+    
     <target name="compile" depends="init">
         <javac srcdir="${core}/src" destdir="${classes}" classpathref="classpath"/>
         <javac srcdir="${commandline}/src" destdir="${classes}" classpathref="classpath"/>
         <javac srcdir="${ant-target}/src" destdir="${classes}" classpathref="classpath"/>
     </target>
-
+    
     <target name="compile-test" depends="compile">
         <javac srcdir="${integration}/test" destdir="${test-classes}" classpathref="classpath"/>
         <javac srcdir="${core}/test" destdir="${test-classes}" classpathref="classpath"/>
     </target>
-
+    
     <path id="test.classpath">
         <pathelement location="${test-classes}"/>
         <path refid="classpath"/>
     </path>
-
+    
     <target name="runtest" depends="compile-test">
         <junit fork="yes" forkmode="once" printsummary="yes" showoutput="off" failureProperty="${test.failed}">
             <classpath location="${classes}"/>
@@ -62,10 +62,13 @@
             </batchtest>
         </junit>
     </target>
-
+    
     <target name="fail" if="${test.failed}" unless="nofail">
-        <fail message="JUnit tests failed!" />
+        <fail message="JUnit tests failed!"/>
     </target>
-
-
+		
+		<target name="package" depends="runtest">
+			<jar destfile="${jarfile}" basedir="${classes}"/>
+		</target>
+    
 </project>
