@@ -17,6 +17,7 @@ public class MySQLDbmsSyntax extends DbmsSyntax {
     return "START TRANSACTION" + generateStatementDelimiter();
   }
 
+  @Override
   public String generateComment(String comment, ChangeScript changeScript) {
     return "#" + " ----- " + comment + " " + changeScript + " ----- ";
   }

@@ -14,7 +14,7 @@
     <path id="dbdeploy.classpath">
         <!-- include the dbdeploy-ant jar -->
         <fileset dir="..">
-            <include name="dbdeploy-ant-*.jar"/>
+            <include name="dbdeploy.jar"/>
         </fileset>
 
         <!-- the dbdeploy task also needs the database driver jar on the classpath -->

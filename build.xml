@@ -4,7 +4,7 @@
     <property name="ant-target" value="dbdeploy-ant"/>
     <property name="junit.report.dir" value="classes/junit-logs"/>
     <property name="test.failed" value="false"/>
-		<property name="jarfile" value="${basedir}/dbdeploy.jar" />
+    <property name="jarfile" value="${basedir}/dbdeploy-dist/dbdeploy.jar"/>
     
     <property name="integration" value="dbdeploy-ant-integration-test"/>
     
@@ -20,9 +20,9 @@
         </fileset>
     </path>
     
-    <target name="all" depends="clean, runtest, fail"/>
+    <target name="all" depends="package"/>
     
-    <target name="init">
+    <target name="init" depends="clean">
         <mkdir dir="${classes}"/>
         <mkdir dir="${classes}/junit-logs"/>
         <mkdir dir="${test-classes}"/>
@@ -66,9 +66,13 @@
     <target name="fail" if="${test.failed}" unless="nofail">
         <fail message="JUnit tests failed!"/>
     </target>
-		
-		<target name="package" depends="runtest">
-			<jar destfile="${jarfile}" basedir="${classes}"/>
-		</target>
+    
+    <target name="package" depends="runtest, fail">
+        <jar destfile="${jarfile}" basedir="${classes}">
+            <fileset dir="${ant-target}/src">
+                <include name="welcome.txt"/>
+            </fileset>
+        </jar>
+    </target>
     
 </project>
