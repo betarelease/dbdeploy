@@ -21,6 +21,7 @@ public class DbDeploy {
   private File undoOutputfile;
   private String dbms;
   private Integer lastChangeToApply = Integer.MAX_VALUE;
+  private Integer fromChange = 0;
   private String deltaset = "Main";
   private String driver;
 
@@ -95,7 +96,7 @@ public class DbDeploy {
     Controller controller = new Controller(changeScriptRepository, databaseSchemaVersion, doScriptApplier,
         undoScriptApplier);
 
-    controller.processChangeScripts(lastChangeToApply);
+    controller.processChangeScripts(fromChange, lastChangeToApply);
 
     queryExecuter.close();
   }
@@ -175,5 +176,13 @@ public class DbDeploy {
 
   public String getWelcomeString() {
     return "dbdeploy ant version";
+  }
+
+  public void setFromChange(Integer fromChange) {
+    this.fromChange = fromChange;
+  }
+
+  public Integer getFromChange() {
+    return fromChange;
   }
 }

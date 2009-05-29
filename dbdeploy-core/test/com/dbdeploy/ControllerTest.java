@@ -51,7 +51,7 @@ public class ControllerTest {
   public void shouldApplyChangeScriptsInOrder() throws Exception {
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(applied);
 
-    controller.processChangeScripts(Integer.MAX_VALUE);
+    controller.processChangeScripts(0, Integer.MAX_VALUE);
 
     InOrder o = inOrder(applier);
     o.verify(applier).apply(change1);
@@ -63,7 +63,7 @@ public class ControllerTest {
   public void shouldApplyChangeScriptsForSpecifiedRange() throws Exception {
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(applied);
 
-    controller.processCustomChangeScripts(Integer.valueOf(1), Integer.valueOf(3));
+    controller.processChangeScripts(Integer.valueOf(1), Integer.valueOf(3));
 
     InOrder o = inOrder(applier);
     o.verify(applier).apply(change2);
@@ -76,14 +76,14 @@ public class ControllerTest {
 
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(applied);
 
-    controller.processChangeScripts(Integer.MAX_VALUE);
+    controller.processChangeScripts(0, Integer.MAX_VALUE);
   }
 
   @Test
   public void shouldApplyUndoScriptsInReverseOrder() throws Exception {
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(applied);
 
-    controller.processChangeScripts(Integer.MAX_VALUE);
+    controller.processChangeScripts(0, Integer.MAX_VALUE);
 
     InOrder o = inOrder(undoApplier);
     o.verify(undoApplier).apply(change3);
@@ -95,7 +95,7 @@ public class ControllerTest {
   public void shouldIgnoreChangesAlreadyAppliedToTheDatabase() throws Exception {
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(Arrays.asList(1));
 
-    controller.processChangeScripts(Integer.MAX_VALUE);
+    controller.processChangeScripts(0, Integer.MAX_VALUE);
 
     InOrder o = inOrder(applier);
     o.verify(applier, never()).apply(change1);
@@ -107,7 +107,7 @@ public class ControllerTest {
   public void shouldNotApplyChangesGreaterThanTheMaxChangeToApply() throws Exception {
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(applied);
 
-    controller.processChangeScripts(2);
+    controller.processChangeScripts(0, 2);
 
     InOrder o = inOrder(applier);
     o.verify(applier).apply(change1);
@@ -118,7 +118,7 @@ public class ControllerTest {
   @Test
   public void shouldCallBeginAndEndOnTheApplier() throws Exception {
     when(appliedChangesProvider.getAppliedChanges()).thenReturn(applied);
-    controller.processChangeScripts(Integer.MAX_VALUE);
+    controller.processChangeScripts(0, Integer.MAX_VALUE);
 
     InOrder o = inOrder(applier);
     o.verify(applier).begin();

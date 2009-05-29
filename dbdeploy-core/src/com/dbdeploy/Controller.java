@@ -25,15 +25,18 @@ public class Controller {
     this.undoScriptApplier = undoScriptApplier;
   }
 
-  public void processCustomChangeScripts(Integer fromChange, Integer lastChangeToApply) throws DbDeployException,
-      IOException {
+  public void processChangeScripts(Integer fromChange, Integer lastChangeToApply) throws DbDeployException, IOException {
     if (lastChangeToApply != Integer.MAX_VALUE) {
       info("Only applying changes up and including change script #" + lastChangeToApply);
     }
 
     List<ChangeScript> scripts = availableChangeScriptsProvider.getAvailableChangeScripts();
+
     List<Integer> start = new ArrayList<Integer>();
-    start.add(fromChange);
+    start = appliedChangesProvider.getAppliedChanges();
+    if (fromChange != 0)
+      start.add(fromChange);
+
     List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, start);
 
     logStatus(scripts, start, toApply);
@@ -46,26 +49,6 @@ public class Controller {
       applyScripts(toApply, undoScriptApplier);
     }
 
-  }
-
-  public void processChangeScripts(Integer lastChangeToApply) throws DbDeployException, IOException {
-    if (lastChangeToApply != Integer.MAX_VALUE) {
-      info("Only applying changes up and including change script #" + lastChangeToApply);
-    }
-
-    List<ChangeScript> scripts = availableChangeScriptsProvider.getAvailableChangeScripts();
-    List<Integer> applied = appliedChangesProvider.getAppliedChanges();
-    List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, applied);
-
-    logStatus(scripts, applied, toApply);
-
-    applyScripts(toApply, changeScriptApplier);
-
-    if (undoScriptApplier != null) {
-      info("Generating undo scripts...");
-      Collections.reverse(toApply);
-      applyScripts(toApply, undoScriptApplier);
-    }
   }
 
   private void applyScripts(List<ChangeScript> toApply, ChangeScriptApplier applier) {
