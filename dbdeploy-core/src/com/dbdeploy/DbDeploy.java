@@ -1,11 +1,7 @@
 package com.dbdeploy;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import com.dbdeploy.appliers.ApplyMode;
 import com.dbdeploy.appliers.PrintStreamApplier;
@@ -178,11 +174,6 @@ public class DbDeploy {
   }
 
   public String getWelcomeString() {
-    InputStream stream = getClass().getClassLoader().getResourceAsStream("welcome.txt");
-    try {
-      return new BufferedReader(new InputStreamReader(stream)).readLine();
-    } catch (IOException e) {
-      return null;
-    }
+    return "dbdeploy ant version";
   }
 }

@@ -2,14 +2,15 @@
     <property name="core" value="dbdeploy-core"/>
     <property name="commandline" value="dbdeploy-cli"/>
     <property name="ant-target" value="dbdeploy-ant"/>
-    <property name="junit.report.dir" value="classes/junit-logs"/>
     <property name="test.failed" value="false"/>
     <property name="jarfile" value="${basedir}/dbdeploy-dist/dbdeploy.jar"/>
     
     <property name="integration" value="dbdeploy-ant-integration-test"/>
     
-    <property name="classes" value="classes"/>
-    <property name="test-classes" value="test-classes"/>
+    <property name="classes" value="${basedir}/classes"/>
+    <property name="test-classes" value="${basedir}/test-classes"/>
+    <property name="test-deltas" value="${basedir}/dbdeploy-ant-integration-test/test"/>
+    <property name="junit.report.dir" value="${test-classes}/junit-logs"/>
     
     <property name="lib" value="lib"/>
     
@@ -24,8 +25,8 @@
     
     <target name="init" depends="clean">
         <mkdir dir="${classes}"/>
-        <mkdir dir="${classes}/junit-logs"/>
         <mkdir dir="${test-classes}"/>
+        <mkdir dir="${junit.report.dir}"/>
     </target>
     
     <target name="clean">
@@ -46,22 +47,36 @@
     
     <path id="test.classpath">
         <pathelement location="${test-classes}"/>
+        <pathelement location="${test-deltas}"/>
         <path refid="classpath"/>
     </path>
     
     <target name="runtest" depends="compile-test">
         <junit fork="yes" forkmode="once" printsummary="yes" showoutput="off" failureProperty="${test.failed}">
-            <classpath location="${classes}"/>
             <classpath>
                 <path refid="test.classpath"/>
             </classpath>
             <formatter type="xml" usefile="true"/>
             <formatter type="plain" usefile="true"/>
             <batchtest filtertrace="on" fork="yes" todir="${junit.report.dir}">
-                <fileset dir="${basedir}/${test-classes}" includes="**/*Test.java"/>
+                <fileset dir="${test-classes}">
+                    <include name="**/*Test.class"/>
+                    <exclude name="**/ScriptGenerationTest.class"/>
+                    <exclude name="**/IntegrationTest.class"/>
+                </fileset>
             </batchtest>
         </junit>
     </target>
+    
+    <target name="runatest" depends="compile-test">
+        <junit printsummary="withOutAndErr" showoutput="on">
+            <classpath>
+                <path refid="test.classpath"/>
+            </classpath>
+            <test name="${test-classes}/${test-to-run}.class"/>
+        </junit>
+    </target>
+    
     
     <target name="fail" if="${test.failed}" unless="nofail">
         <fail message="JUnit tests failed!"/>
